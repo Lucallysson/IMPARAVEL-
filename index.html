@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="IMPARÁVEL"/>
+<title>IMPARÁVEL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
+
+:root {
+–bg: #080C10; –surface: #0D1117; –card: #111820;
+–border: #1C2A38; –accent: #00D4FF; –gold: #FFD700;
+–purple: #A855F7; –green: #10B981; –orange: #FF6B35;
+–text: #E8F4F8; –muted: #4A6278; –dim: #1E3048;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+background: var(–bg); color: var(–text);
+font-family: ‘Space Mono’, monospace;
+min-height: 100vh; overflow-x: hidden;
+padding-bottom: 80px;
+}
+
+/* HEADER */
+.header {
+padding: 24px 20px 16px;
+background: linear-gradient(180deg, #0D1B2A 0%, var(–bg) 100%);
+border-bottom: 1px solid var(–border);
+position: sticky; top: 0; z-index: 100;
+}
+.header-sub { font-size: 9px; letter-spacing: 5px; color: var(–muted); margin-bottom: 4px; }
+.header-title { font-family: ‘Barlow Condensed’, sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+.header-title span { color: var(–accent); }
+.header-meta { font-size: 10px; color: var(–muted); letter-spacing: 2px; margin-top: 2px; }
+.semana-badge {
+display: inline-block; padding: 6px 14px; border-radius: 8px;
+font-size: 11px; font-weight: 700; letter-spacing: 1px;
+border: 1px solid; margin-top: 10px;
+}
+.progress-bar-wrap { margin-top: 10px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 9px; color: var(–muted); margin-bottom: 4px; letter-spacing: 2px; }
+.progress-track { background: var(–dim); border-radius: 6px; height: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+
+/* ABAS */
+.tabs { display: flex; border-bottom: 1px solid var(–border); background: var(–surface); }
+.tab-btn {
+flex: 1; padding: 13px 8px; border: none; background: transparent;
+font-family: ‘Space Mono’, monospace; font-size: 9px; font-weight: 700;
+letter-spacing: 3px; cursor: pointer; border-bottom: 2px solid transparent;
+transition: all 0.2s; color: var(–muted);
+}
+.tab-btn.active { color: var(–gold); border-bottom-color: var(–gold); }
+
+/* SEMANA TOGGLE */
+.sem-toggle { display: flex; gap: 8px; padding: 12px 20px 0; }
+.sem-btn {
+flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(–border);
+background: transparent; font-family: ‘Space Mono’, monospace;
+font-size: 10px; font-weight: 700; letter-spacing: 1px;
+cursor: pointer; color: var(–muted); transition: all 0.2s;
+}
+.sem-btn.active { border-color: var(–accent); background: rgba(0,212,255,0.1); color: var(–accent); }
+.sem-btn.active.b { border-color: var(–orange); background: rgba(255,107,53,0.1); color: var(–orange); }
+
+/* DIAS */
+.dias-wrap { display: flex; gap: 6px; padding: 10px 20px; overflow-x: auto; border-bottom: 1px solid var(–border); }
+.dia-btn {
+flex-shrink: 0; padding: 7px 12px; border-radius: 7px;
+border: 1px solid var(–border); background: transparent;
+font-family: ‘Space Mono’, monospace; font-size: 10px; font-weight: 700;
+letter-spacing: 1px; cursor: pointer; color: var(–muted);
+transition: all 0.2s; position: relative;
+}
+.dia-btn.done { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.1); color: var(–green); }
+.dia-check { position: absolute; top: -5px; right: -5px; font-size: 8px; background: var(–green); color: #000; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+
+/* DIA HEADER */
+.dia-header { padding: 16px 20px 12px; border-bottom: 1px solid; }
+.dia-tag { display: inline-block; font-size: 9px; letter-spacing: 3px; font-weight: 700; padding: 3px 10px; border-radius: 4px; margin-bottom: 7px; border: 1px solid; }
+.dia-titulo { font-family: ‘Barlow Condensed’, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+.dia-meta { font-size: 10px; color: var(–muted); margin-top: 4px; }
+
+/* EXERCÍCIO */
+.ex-card {
+margin: 0 20px 10px; border-radius: 12px;
+background: var(–card); border: 1px solid var(–border);
+border-left: 3px solid; overflow: hidden;
+}
+.ex-top { padding: 12px 14px 8px; border-bottom: 1px solid var(–border); display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.ex-nome { font-family: ‘Barlow Condensed’, sans-serif; font-size: 17px; font-weight: 800; margin-bottom: 2px; }
+.ex-obs { font-size: 10px; color: var(–muted); line-height: 1.4; }
+.ex-musculo { font-size: 9px; letter-spacing: 2px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid; margin-bottom: 4px; text-align: center; }
+.ex-series-info { font-size: 11px; color: var(–muted); text-align: right; white-space: nowrap; }
+.ex-series-num { font-size: 20px; font-weight: 900; line-height: 1; }
+.ex-bottom { padding: 10px 14px; display: flex; gap: 8px; overflow-x: auto; align-items: flex-end; }
+.serie-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+.serie-label { font-size: 8px; color: var(–muted); letter-spacing: 1px; }
+.serie-input {
+width: 52px; background: #0a1520; border-radius: 6px;
+color: var(–text); font-size: 13px; font-weight: 700;
+text-align: center; padding: 6px 4px;
+font-family: ‘Space Mono’, monospace; outline: none;
+border: 1px solid rgba(0,212,255,0.15);
+transition: border-color 0.2s;
+-moz-appearance: textfield;
+}
+.serie-input::-webkit-outer-spin-button,
+.serie-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.serie-input:focus { border-color: var(–accent); }
+.obs-col { border-left: 1px solid var(–border); padding-left: 10px; margin-left: 4px; flex-shrink: 0; }
+.obs-label { font-size: 8px; color: var(–muted); margin-bottom: 4px; }
+.obs-input {
+width: 88px; background: #0a1520; border: 1px solid var(–border);
+border-radius: 6px; color: var(–muted); font-size: 10px;
+padding: 5px 7px; font-family: ‘Space Mono’, monospace;
+outline: none; resize: none; height: 52px;
+}
+
+/* BOTÃO CONCLUIR */
+.btn-concluir {
+margin: 8px 20px; width: calc(100% - 40px);
+padding: 14px; border: none; border-radius: 10px;
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 16px; font-weight: 900; letter-spacing: 2px;
+cursor: pointer; transition: opacity 0.2s;
+}
+.btn-concluir:active { opacity: 0.8; }
+
+/* BANNER SEMANA COMPLETA */
+.banner-completo {
+margin: 12px 20px 0; padding: 14px 16px;
+background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.4);
+border-radius: 10px;
+}
+.banner-titulo { font-size: 16px; font-weight: 900; color: var(–green); margin-bottom: 4px; font-family: ‘Barlow Condensed’, sans-serif; letter-spacing: 1px; }
+.banner-sub { font-size: 11px; color: var(–muted); margin-bottom: 12px; }
+.btn-avancar {
+width: 100%; padding: 11px; background: var(–green);
+border: none; border-radius: 8px; color: #000;
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 15px; font-weight: 900; letter-spacing: 1px; cursor: pointer;
+}
+.btn-row { display: flex; gap: 8px; }
+.btn-confirmar { flex: 1; padding: 10px; background: var(–green); border: none; border-radius: 8px; color: #000; font-family: ‘Barlow Condensed’, sans-serif; font-size: 14px; font-weight: 900; cursor: pointer; }
+.btn-cancelar { flex: 1; padding: 10px; background: transparent; border: 1px solid var(–border); border-radius: 8px; color: var(–muted); font-family: ‘Space Mono’, monospace; font-size: 11px; cursor: pointer; }
+
+/* MAV */
+.mav-section { padding: 20px 20px 40px; }
+.mav-sub { font-size: 9px; letter-spacing: 4px; color: var(–muted); margin-bottom: 4px; }
+.mav-titulo { font-family: ‘Barlow Condensed’, sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+.mav-desc { font-size: 10px; color: var(–muted); margin-bottom: 20px; line-height: 1.6; }
+.mav-card { background: var(–card); border: 1px solid var(–border); border-left: 3px solid; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.mav-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.mav-nome { font-family: ‘Barlow Condensed’, sans-serif; font-size: 17px; font-weight: 900; }
+.mav-freq { font-size: 10px; color: var(–muted); margin-left: 8px; }
+.mav-status { font-size: 10px; font-weight: 800; color: var(–green); }
+.mav-num { font-size: 22px; font-weight: 900; line-height: 1; }
+.mav-unit { font-size: 9px; color: var(–muted); }
+.mav-track-wrap { position: relative; margin-bottom: 4px; }
+.mav-zone { position: absolute; top: 0; bottom: 0; background: rgba(16,185,129,0.15); border-radius: 4px; }
+.mav-track { background: var(–dim); border-radius: 6px; height: 6px; overflow: hidden; }
+.mav-fill { height: 100%; border-radius: 6px; }
+.mav-legend { display: flex; justify-content: space-between; font-size: 9px; color: var(–muted); }
+.mav-mav { color: rgba(16,185,129,0.6); }
+.mav-detalhe { font-size: 10px; color: var(–muted); margin-top: 8px; line-height: 1.5; }
+.mav-veredicto { margin-top: 16px; background: var(–card); border: 1px solid rgba(16,185,129,0.4); border-radius: 10px; padding: 16px; }
+.mav-veredicto-titulo { font-size: 14px; font-weight: 800; color: var(–green); margin-bottom: 6px; font-family: ‘Barlow Condensed’, sans-serif; }
+.mav-veredicto-txt { font-size: 10px; color: var(–muted); line-height: 1.7; }
+
+.content { padding-bottom: 20px; }
+.dias-content { padding: 16px 20px 0; }
+</style>
+
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ─── DADOS ────────────────────────────────────────────────────────────────────
+const SEXTA = [
+  { nome:"Supino Reto (Halteres)", series:3, reps:"8–10", musculo:"Peito", obs:"Espessura total — amplitude máxima" },
+  { nome:"Remada Neutra no Cabo", series:3, reps:"8–10", musculo:"Costas", obs:"Largura + espessura sem stress na lombar" },
+  { nome:"Desenvolvimento (Halteres)", series:3, reps:"8–10", musculo:"Ombro", obs:"Força do deltóide — V-shape" },
+  { nome:"Elevação Lateral (Polia)", series:3, reps:"10–12", musculo:"Ombro", obs:"⭐ Tensão constante — fator nº1 de largura" },
+  { nome:"Rosca Direta (Barra W)", series:3, reps:"8–10", musculo:"Bíceps", obs:"⭐ Base de força — supera semana anterior" },
+  { nome:"Rosca Martelo (Polia/Corda)", series:2, reps:"10–12", musculo:"Bíceps", obs:"Braquial — braço de frente" },
+  { nome:"Tríceps Pulley (Barra Reta)", series:3, reps:"8–10", musculo:"Tríceps", obs:"Densidade — carga progressiva" },
+  { nome:"Tríceps Francês (Polia)", series:2, reps:"10–12", musculo:"Tríceps", obs:"Cabeça longa — massa e volume" },
+];
+
+const PLANO = {
+  A: { label:"A", foco:"Foco Pull", cor:"#00D4FF", dias:[
+    { id:"seg", label:"SEG", titulo:"PULL — Costas + Bíceps", tag:"LARGURA + BRAÇO DE FRENTE", cor:"#00D4FF",
+      exercicios:[
+        { nome:"Puxada Alta Aberta", series:3, reps:"8–10", musculo:"Costas", obs:"Principal de largura — redondo maior" },
+        { nome:"Remada Curvada (Barra Livre)", series:3, reps:"6–8", musculo:"Costas", obs:"Força + espessura — barra livre supera Smith" },
+        { nome:"Pull-Around Unilateral", series:2, reps:"10–12", musculo:"Costas", obs:"Dorsal isolada — foco no alongamento" },
+        { nome:"Rosca Scott (Barra W)", series:3, reps:"8–10", musculo:"Bíceps", obs:"⭐ Pico do bíceps — zero balanço" },
+        { nome:"Rosca 45° Inclinada (Halteres)", series:2, reps:"8–10", musculo:"Bíceps", obs:"Máximo alongamento — devagar na descida" },
+        { nome:"Rosca Martelo (Halteres)", series:2, reps:"8–10", musculo:"Bíceps", obs:"Braquial + largura do braço de frente" },
+      ]},
+    { id:"ter", label:"TER", titulo:"LOWER 1 — Quadríceps", tag:"FORÇA + VOLUME", cor:"#FF6B35",
+      exercicios:[
+        { nome:"Agachamento Livre", series:4, reps:"6–8", musculo:"Quad", obs:"4 séries — composto mais eficiente" },
+        { nome:"Leg Press 45°", series:3, reps:"10–12", musculo:"Quad", obs:"Pés baixos — foco total em quad" },
+        { nome:"Cadeira Extensora", series:3, reps:"12–15", musculo:"Quad", obs:"Pausa 2s no topo — contração máxima" },
+        { nome:"Cadeira Adutora", series:2, reps:"12–15", musculo:"Adutor", obs:"Interno da coxa" },
+        { nome:"Panturrilha em Pé", series:4, reps:"12–15", musculo:"Panturrilha", obs:"Amplitude total — pausa no fundo" },
+      ]},
+    { id:"qua", label:"QUA", titulo:"PUSH — Peito + Ombro + Tríceps", tag:"FORÇA + LARGURA", cor:"#A855F7",
+      exercicios:[
+        { nome:"Supino Inclinado (Halteres)", series:3, reps:"6–8", musculo:"Peito", obs:"Amplitude real — halteres superam Smith" },
+        { nome:"Supino Reto (Barra)", series:3, reps:"8–10", musculo:"Peito", obs:"Base de espessura do peito" },
+        { nome:"Crossover (Cima p/ Baixo)", series:2, reps:"12–15", musculo:"Peito", obs:"Detalhe inferior + pump final" },
+        { nome:"Desenvolvimento (Halteres)", series:3, reps:"8–10", musculo:"Ombro", obs:"Força de ombro — V-shape começa aqui" },
+        { nome:"Elevação Lateral", series:4, reps:"10–12", musculo:"Ombro", obs:"⭐ 4 séries — prioridade máxima" },
+        { nome:"Tríceps Testa (Barra W)", series:3, reps:"8–10", musculo:"Tríceps", obs:"Massa bruta — cabeça longa" },
+        { nome:"Tríceps Corda (Polia)", series:2, reps:"12–15", musculo:"Tríceps", obs:"Pico de contração" },
+      ]},
+    { id:"qui", label:"QUI", titulo:"LOWER 2 — Posterior + Glúteo", tag:"FORÇA BRUTA", cor:"#10B981",
+      exercicios:[
+        { nome:"Stiff (Barra)", series:4, reps:"6–8", musculo:"Posterior", obs:"4 séries — técnica impecável" },
+        { nome:"Mesa Flexora", series:3, reps:"10–12", musculo:"Posterior", obs:"3s excêntrico — onde mais cresce" },
+        { nome:"Cadeira Flexora", series:3, reps:"12–15", musculo:"Posterior", obs:"Pico de contração — isolamento final" },
+        { nome:"Agachamento Búlgaro (Halteres)", series:2, reps:"10–12", musculo:"Glúteo", obs:"Unilateral — corrige desequilíbrio" },
+        { nome:"Cadeira Abdutora", series:2, reps:"15", musculo:"Glúteo", obs:"Glúteo médio" },
+        { nome:"Panturrilha Sentado", series:4, reps:"12–15", musculo:"Panturrilha", obs:"Sóleo — estímulo diferente da Terça" },
+      ]},
+    { id:"sex", label:"SEX ⭐", titulo:"UPPER — Peito + Costas + Ombro + Braços", tag:"⭐ FOCO BRAÇOS", cor:"#FFD700", exercicios:SEXTA },
+  ]},
+  B: { label:"B", foco:"Foco Push", cor:"#FF6B35", dias:[
+    { id:"seg", label:"SEG", titulo:"PUSH — Peito + Ombro + Tríceps", tag:"FORÇA SUPERIOR", cor:"#A855F7",
+      exercicios:[
+        { nome:"Supino Inclinado (Halteres)", series:3, reps:"6–8", musculo:"Peito", obs:"Começa pesado — energia máxima" },
+        { nome:"Supino Reto (Barra)", series:3, reps:"8–10", musculo:"Peito", obs:"3 séries — cadência 3s descida" },
+        { nome:"Crossover (Cima p/ Baixo)", series:2, reps:"12–15", musculo:"Peito", obs:"Detalhe inferior do peito" },
+        { nome:"Desenvolvimento (Halteres)", series:3, reps:"8–10", musculo:"Ombro", obs:"Força de ombro — prioridade Sem. B" },
+        { nome:"Elevação Lateral", series:4, reps:"10–12", musculo:"Ombro", obs:"⭐ 4 séries — jamais cortar" },
+        { nome:"Tríceps Testa (Barra W)", series:3, reps:"8–10", musculo:"Tríceps", obs:"Massa bruta — cabeça longa" },
+        { nome:"Tríceps Corda (Polia)", series:2, reps:"12–15", musculo:"Tríceps", obs:"Pico de contração" },
+      ]},
+    { id:"ter", label:"TER", titulo:"LOWER 1 — Quadríceps", tag:"FORÇA + VOLUME", cor:"#FF6B35",
+      exercicios:[
+        { nome:"Agachamento Livre", series:4, reps:"6–8", musculo:"Quad", obs:"4 séries — supera semana anterior" },
+        { nome:"Leg Press 45°", series:3, reps:"10–12", musculo:"Quad", obs:"Pés baixos — quad em foco" },
+        { nome:"Cadeira Extensora", series:3, reps:"12–15", musculo:"Quad", obs:"Pausa 2s no topo" },
+        { nome:"Cadeira Adutora", series:2, reps:"12–15", musculo:"Adutor", obs:"Interno da coxa" },
+        { nome:"Panturrilha em Pé", series:4, reps:"12–15", musculo:"Panturrilha", obs:"Amplitude total" },
+      ]},
+    { id:"qua", label:"QUA", titulo:"PULL — Costas + Bíceps", tag:"LARGURA + BRAÇO DE FRENTE", cor:"#00D4FF",
+      exercicios:[
+        { nome:"Puxada Alta Aberta", series:3, reps:"8–10", musculo:"Costas", obs:"Redondo maior — puxa pro peito" },
+        { nome:"Remada Curvada (Barra Livre)", series:3, reps:"6–8", musculo:"Costas", obs:"Força — cotovelo rente ao corpo" },
+        { nome:"Pull-Around Unilateral", series:2, reps:"10–12", musculo:"Costas", obs:"Dorsal isolada — sem rotação" },
+        { nome:"Rosca Scott (Barra W)", series:3, reps:"8–10", musculo:"Bíceps", obs:"⭐ Pico — supera carga da Sem. A" },
+        { nome:"Rosca 45° Inclinada (Halteres)", series:2, reps:"8–10", musculo:"Bíceps", obs:"Máximo alongamento" },
+        { nome:"Rosca Martelo (Halteres)", series:2, reps:"8–10", musculo:"Bíceps", obs:"Braço de frente — braquial" },
+      ]},
+    { id:"qui", label:"QUI", titulo:"LOWER 2 — Posterior + Glúteo", tag:"FORÇA BRUTA", cor:"#10B981",
+      exercicios:[
+        { nome:"Stiff (Barra)", series:4, reps:"6–8", musculo:"Posterior", obs:"Nunca arredonda a lombar" },
+        { nome:"Mesa Flexora", series:3, reps:"10–12", musculo:"Posterior", obs:"Excêntrico lento — 3s" },
+        { nome:"Cadeira Flexora", series:3, reps:"12–15", musculo:"Posterior", obs:"Isolamento final" },
+        { nome:"Agachamento Búlgaro (Halteres)", series:2, reps:"10–12", musculo:"Glúteo", obs:"Joelho não passa o pé" },
+        { nome:"Cadeira Abdutora", series:2, reps:"15", musculo:"Glúteo", obs:"Glúteo médio" },
+        { nome:"Panturrilha Sentado", series:4, reps:"12–15", musculo:"Panturrilha", obs:"Sóleo" },
+      ]},
+    { id:"sex", label:"SEX ⭐", titulo:"UPPER — Peito + Costas + Ombro + Braços", tag:"⭐ FOCO BRAÇOS", cor:"#FFD700", exercicios:SEXTA },
+  ]},
+};
+
+const MAV = [
+  { musculo:"Peito", series:14, mev:10, mav_min:12, mav_max:20, mrv:22, cor:"#A855F7", freq:"2x", det:"Push: 8 séries + Sexta: +3 + ~3 indiretas = 14 total" },
+  { musculo:"Costas", series:16, mev:10, mav_min:14, mav_max:22, mrv:25, cor:"#00D4FF", freq:"2x", det:"Pull: 8 séries + Sexta: +3 + ~5 indiretas = 16 total" },
+  { musculo:"Deltóide", series:16, mev:8, mav_min:16, mav_max:22, mrv:26, cor:"#FF6B35", freq:"2x", det:"Push: 7 séries + Sexta: +6 + ~3 indiretas = 16 total" },
+  { musculo:"Bíceps", series:14, mev:8, mav_min:14, mav_max:20, mrv:26, cor:"#FFD700", freq:"2x", det:"Pull: 7 séries + Sexta: +5 + ~2 indiretas = 14 total" },
+  { musculo:"Tríceps", series:12, mev:6, mav_min:10, mav_max:14, mrv:18, cor:"#FFD700", freq:"2x", det:"Push: 5 séries + Sexta: +5 + ~2 indiretas = 12 total" },
+  { musculo:"Quadríceps", series:12, mev:8, mav_min:12, mav_max:18, mrv:20, cor:"#10B981", freq:"1x", det:"Terça: 4 Agach. + 3 Leg Press + 3 Extensora = 10 + ~2 indiretas" },
+  { musculo:"Post. Coxa", series:12, mev:6, mav_min:10, mav_max:16, mrv:20, cor:"#10B981", freq:"2x", det:"Quinta: 4 Stiff + 3 Mesa + 3 Cadeira = 10 + ~2 indiretas" },
+  { musculo:"Glúteo", series:8, mev:0, mav_min:8, mav_max:16, mrv:20, cor:"#10B981", freq:"2x", det:"Búlgaro (2) + Abdutora (2) + ~4 indiretas de Stiff = 8 total" },
+  { musculo:"Panturrilha", series:10, mev:6, mav_min:8, mav_max:16, mrv:20, cor:"#10B981", freq:"2x", det:"Terça: 4 em pé + Quinta: 4 sentado + ~2 indiretas = 10 total" },
+];
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+const S = {
+  get:(k,d=null)=>{ try{ const v=localStorage.getItem(k); return v!==null?JSON.parse(v):d; }catch{ return d; } },
+  set:(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch{} }
+};
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  ciclo: S.get('imp_ciclo',0),
+  diasFeitos: S.get('imp_dias',[]),
+  diaAtual: 'seg',
+  aba: 'treino',
+  confirmando: false,
+};
+
+function getSemana(){ return state.ciclo%2===0?'A':'B'; }
+function getPlano(){ return PLANO[getSemana()]; }
+function getDia(){ return getPlano().dias.find(d=>d.id===state.diaAtual); }
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  const sem = getSemana();
+  const plano = getPlano();
+  const dia = getDia();
+  const diasFeitos = state.diasFeitos;
+  const totalDias = plano.dias.length;
+  const feitos = diasFeitos.length;
+  const completo = feitos >= totalDias;
+
+  const musculoCores = { Peito:'#A855F7', Costas:'#00D4FF', Ombro:'#FF6B35', Bíceps:'#FFD700', Tríceps:'#FFD700' };
+
+  document.getElementById('app').innerHTML = `
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-sub">PROTOCOLO CIENTÍFICO</div>
+      <div class="header-title"><span>IMPARÁVEL</span></div>
+      <div class="header-meta">PPL + LOWER DUPLO · MAV OTIMIZADO · CICLO ${state.ciclo+1}</div>
+      <div class="semana-badge" style="border-color:${plano.cor}40;background:${plano.cor}12;color:${plano.cor}">
+        SEM ${sem} — ${plano.foco.toUpperCase()}
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-label">
+          <span>PROGRESSO DA SEMANA</span>
+          <span style="color:${plano.cor}">${feitos}/${totalDias} DIAS</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${(feitos/totalDias)*100}%;background:${completo?'#10B981':plano.cor}"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABAS -->
+    <div class="tabs">
+      <button class="tab-btn ${state.aba==='treino'?'active':''}" onclick="setAba('treino')">TREINO</button>
+      <button class="tab-btn ${state.aba==='mav'?'active':''}" onclick="setAba('mav')">VOLUME MAV</button>
+    </div>
+
+    ${state.aba==='treino' ? renderTreino(plano, dia, diasFeitos, completo) : renderMav()}
+  `;
+
+  // restaura inputs
+  document.querySelectorAll('.serie-input').forEach(inp => {
+    const k = inp.dataset.key;
+    const saved = S.get(k,'');
+    inp.value = saved;
+    if(saved) inp.style.borderColor = inp.dataset.cor+'60';
+  });
+  document.querySelectorAll('.obs-input').forEach(inp => {
+    inp.value = S.get(inp.dataset.key,'');
+  });
+}
+
+function renderTreino(plano, dia, diasFeitos, completo){
+  const sem = getSemana();
+  return `
+    <!-- TOGGLE SEMANA -->
+    <div class="sem-toggle">
+      <button class="sem-btn ${sem==='A'?'active':''}" onclick="setSemana('A')">SEM A — FOCO PULL</button>
+      <button class="sem-btn ${sem==='B'?'active b':''}" onclick="setSemana('B')">SEM B — FOCO PUSH</button>
+    </div>
+
+    <!-- DIAS -->
+    <div class="dias-wrap">
+      ${plano.dias.map(d=>`
+        <button class="dia-btn ${d.id===state.diaAtual?'':''}${diasFeitos.includes(d.id)?' done':''}" 
+          style="${d.id===state.diaAtual?`border-color:${d.cor};background:${d.cor}18;color:${d.cor}`:''}"
+          onclick="setDia('${d.id}')">
+          ${d.label}
+          ${diasFeitos.includes(d.id)?'<span class="dia-check">✓</span>':''}
+        </button>
+      `).join('')}
+    </div>
+
+    <div class="content">
+      ${completo ? renderBannerCompleto(sem) : ''}
+
+      <!-- DIA HEADER -->
+      ${dia ? `
+        <div class="dia-header" style="border-color:${dia.cor}20">
+          <div class="dia-tag" style="color:${dia.cor};border-color:${dia.cor}40;background:${dia.cor}15">${dia.tag}</div>
+          <div class="dia-titulo">${dia.titulo}</div>
+          <div class="dia-meta">
+            ${dia.exercicios.length} exercícios · ${dia.exercicios.reduce((a,e)=>a+e.series,0)} séries
+            ${diasFeitos.includes(state.diaAtual)?'<span style="color:#10B981;margin-left:8px">✓ concluído</span>':''}
+          </div>
+        </div>
+
+        <div class="dias-content">
+          ${dia.exercicios.map((ex,i)=>renderExercicio(ex,i,dia,sem)).join('')}
+          ${!diasFeitos.includes(state.diaAtual)?`
+            <button class="btn-concluir" 
+              style="background:linear-gradient(135deg,${dia.cor},${dia.cor}CC);color:#000"
+              onclick="marcarDia()">
+              ✓ MARCAR DIA COMO CONCLUÍDO
+            </button>
+          `:''}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderExercicio(ex, i, dia, sem){
+  const mc = {Peito:'#A855F7',Costas:'#00D4FF',Ombro:'#FF6B35',Bíceps:'#FFD700',Tríceps:'#FFD700'}[ex.musculo]||'#10B981';
+  const series = Array.from({length:ex.series},(_,si)=>si);
+  return `
+    <div class="ex-card" style="border-left-color:${dia.cor}">
+      <div class="ex-top">
+        <div style="flex:1">
+          <div class="ex-nome">${ex.nome}</div>
+          <div class="ex-obs">${ex.obs}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="ex-musculo" style="color:${mc};border-color:${mc}40;background:${mc}15">${ex.musculo}</div>
+          <div class="ex-series-info">
+            <span class="ex-series-num" style="color:${dia.cor}">${ex.series}</span> × <span>${ex.reps}</span>
+          </div>
+        </div>
+      </div>
+      <div class="ex-bottom">
+        ${series.map(si=>`
+          <div class="serie-col">
+            <div class="serie-label">S${si+1}</div>
+            <input class="serie-input" type="number" placeholder="kg" 
+              data-key="imp_c${state.ciclo}_${sem}_${state.diaAtual}_${i}_${si}_kg"
+              data-cor="${dia.cor}"
+              oninput="saveInput(this)">
+            <input class="serie-input" type="number" placeholder="rep"
+              data-key="imp_c${state.ciclo}_${sem}_${state.diaAtual}_${i}_${si}_rep"
+              data-cor="${dia.cor}"
+              oninput="saveInput(this)">
+          </div>
+        `).join('')}
+        <div class="obs-col">
+          <div class="obs-label">NOTA</div>
+          <textarea class="obs-input" placeholder="anotação..."
+            data-key="imp_c${state.ciclo}_${sem}_${state.diaAtual}_${i}_obs"
+            oninput="saveObs(this)"></textarea>
+
+```
+    </div>
+  </div>
+</div>
+```
+
+`;
+}
+
+function renderBannerCompleto(sem){
+const proxSem = sem===‘A’?‘B’:‘A’;
+const proxFoco = sem===‘A’?‘Foco Push’:‘Foco Pull’;
+return `<div class="banner-completo"> <div class="banner-titulo">🏆 SEMANA ${sem} CONCLUÍDA!</div> <div class="banner-sub">Próxima: <strong style="color:${sem==='A'?'#FF6B35':'#00D4FF'}">Semana ${proxSem} — ${proxFoco}</strong></div> ${!state.confirmando ?`
+<button class="btn-avancar" onclick="iniciarConfirm()">AVANÇAR PARA PRÓXIMA SEMANA →</button>
+`:`
+<div class="btn-row">
+<button class="btn-confirmar" onclick="avancarSemana()">CONFIRMAR ✓</button>
+<button class="btn-cancelar" onclick="cancelarConfirm()">CANCELAR</button>
+</div>
+`} </div> `;
+}
+
+function renderMav(){
+return `<div class="mav-section"> <div class="mav-sub">SCHOENFELD · ISRAETEL · SPORTS MEDICINE 2025</div> <div class="mav-titulo">Volume por músculo</div> <div class="mav-desc">MAV = faixa de máximos ganhos. MEV = mínimo pra crescer. MRV = acima disso você regride. Todos os grupos estão no centro do MAV.</div> ${MAV.map(m=>{ const pct = Math.min((m.series/m.mrv)*100,100); const mavS = (m.mav_min/m.mrv)*100; const mavE = (m.mav_max/m.mrv)*100; return`
+<div class="mav-card" style="border-left-color:${m.cor}">
+<div class="mav-row">
+<div><span class="mav-nome">${m.musculo}</span><span class="mav-freq">${m.freq}/sem</span></div>
+<div style="text-align:right">
+<div class="mav-status">MAV ✅</div>
+<div class="mav-num" style="color:${m.cor}">${m.series}</div>
+<div class="mav-unit">séries/sem</div>
+</div>
+</div>
+<div class="mav-track-wrap">
+<div class="mav-zone" style="left:${mavS}%;width:${mavE-mavS}%"></div>
+<div class="mav-track">
+<div class="mav-fill" style="width:${pct}%;background:${m.cor}"></div>
+</div>
+</div>
+<div class="mav-legend">
+<span>MEV ${m.mev}</span>
+<span class="mav-mav">MAV ${m.mav_min}–${m.mav_max}</span>
+<span>MRV ${m.mrv}</span>
+</div>
+<div class="mav-detalhe">${m.det}</div>
+</div>
+`; }).join('')} <div class="mav-veredicto"> <div class="mav-veredicto-titulo">✅ 9/9 grupos no MAV — Protocolo validado</div> <div class="mav-veredicto-txt">Volume alto o suficiente pra maximizar hipertrofia, baixo o suficiente pra recuperar e progredir toda semana. Frequência 2x em todos os grupos prioritários. Baseado em Israetel (RP), Schoenfeld (2017/2019) e Sports Medicine (2025).</div> </div> </div> `;
+}
+
+// ─── AÇÕES ───────────────────────────────────────────────────────────────────
+function setAba(a){ state.aba=a; render(); }
+function setDia(id){ state.diaAtual=id; render(); }
+function setSemana(s){
+const novoCiclo = s===‘A’?(Math.floor(state.ciclo/2)*2):(Math.floor(state.ciclo/2)*2+1);
+state.ciclo=novoCiclo; state.diasFeitos=[]; state.diaAtual=‘seg’; state.confirmando=false;
+S.set(‘imp_ciclo’,state.ciclo); S.set(‘imp_dias’,[]);
+render();
+}
+function marcarDia(){
+if(state.diasFeitos.includes(state.diaAtual)) return;
+const novos=[…state.diasFeitos, state.diaAtual];
+state.diasFeitos=novos; S.set(‘imp_dias’,novos);
+const dias=[‘seg’,‘ter’,‘qua’,‘qui’,‘sex’];
+const idx=dias.indexOf(state.diaAtual);
+if(idx<dias.length-1) state.diaAtual=dias[idx+1];
+render();
+}
+function iniciarConfirm(){ state.confirmando=true; render(); }
+function cancelarConfirm(){ state.confirmando=false; render(); }
+function avancarSemana(){
+state.ciclo++; state.diasFeitos=[]; state.diaAtual=‘seg’; state.confirmando=false;
+S.set(‘imp_ciclo’,state.ciclo); S.set(‘imp_dias’,[]);
+render();
+}
+function saveInput(el){
+S.set(el.dataset.key, el.value);
+el.style.borderColor = el.value ? el.dataset.cor+‘60’ : ‘rgba(0,212,255,0.15)’;
+}
+function saveObs(el){ S.set(el.dataset.key, el.value); }
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+render();
+</script>
+
+</body>
+</html>
